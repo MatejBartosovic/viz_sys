@@ -10,31 +10,33 @@
 
 class HughLineDetection {
 
-private:
+public:
 
-    class Pixel{
+    struct Pixel{
     public:
         uint32_t x;
         uint32_t y;
         Pixel(uint32_t x,uint32_t y) : x(x), y(y){
         }
-
-        /*Pixel(const HughLineDetection::Pixel& obj){
-            this->x=obj.x;
-            this->y=obj.y;
-        }*/
     };
-    struct Line{
+    class Line{
+    public:
         int angleId;
         uint32_t distance;
-        Pixel *pixel;
-        Line(int angleId, uint32_t distance, Pixel *pixel):angleId(angleId), distance(distance),pixel(pixel){
+        Pixel pixel;
+        Line(int angleId, uint32_t distance, Pixel pixelr):angleId(angleId), distance(distance),pixel(pixelr){
+       // pixel = pixelr;
         }
+        /*Line operator=(Line other){
+            this->angleId=other.angleId;
+            this->distance = other.distance;
+            this->pixel = other.pixel;
+            printf("RRR x =%d y =%d",pixel.x,pixel.y);
+        }*/
     };
 
     class Data{
-    public
-        :
+    public:
         Pixel pixel;
         std::vector<double> *angles;
         //std::vector<uint8_t> distance;
@@ -43,23 +45,13 @@ private:
         inline Data(Pixel pixel, std::vector<double>* angles,double rho) : pixel(pixel), angles(angles){
             //calculate distance for each angle
             for(int i = 0;i<angles->size();i++) {
-                double citatel = pixel.y +pixel.x*angles->at(i);
-                double x = citatel / (2*angles->at(i));
+                double citatel = pixel.y + pixel.x * angles->at(i);
+                double x = citatel / (2 * angles->at(i));
                 double y = citatel / 2;
-                lines.push_back(Line(i,(int)sqrt(pow(x,2)+pow(y,2))/rho,&pixel));
+                int distance = sqrt(pow(x, 2) + pow(y, 2)) / rho;
+                lines.push_back(Line(i, distance, this->pixel));
             }
         }
-
-        /*int isEqual(Data &other){
-            for(uint32_t i=0;i<distance.size();i++)
-                if(this->distance[i] == other.distance[i])
-                    return i;
-            return -1;
-        }
-
-        bool  isEqual(Data &other, int id){
-            return (this->distance[id] == other.distance[id]);
-        }*/
     };
     std::vector<double> angles;
 protected:
@@ -68,11 +60,5 @@ protected:
 public:
     HughLineDetection(double rho, double theta, int threshold);
     void getLines(cv::Mat &image);
-    /*struct Line{
-        double angle;
-        int distance;
-        std::vector<int> dataId;
-        Line (double angle,int distance) : angle(angle), distance(distance){}
-    };*/
 };
 #endif //VIZ_SYS_HUGHLINEDETECTION_H
