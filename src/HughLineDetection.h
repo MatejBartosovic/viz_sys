@@ -25,21 +25,13 @@ public:
         uint32_t distance;
         Pixel pixel;
         Line(int angleId, uint32_t distance, Pixel pixelr):angleId(angleId), distance(distance),pixel(pixelr){
-       // pixel = pixelr;
         }
-        /*Line operator=(Line other){
-            this->angleId=other.angleId;
-            this->distance = other.distance;
-            this->pixel = other.pixel;
-            printf("RRR x =%d y =%d",pixel.x,pixel.y);
-        }*/
     };
 
     class Data{
     public:
         Pixel pixel;
         std::vector<double> *angles;
-        //std::vector<uint8_t> distance;
         std::vector<Line> lines;
 
         inline Data(Pixel pixel, std::vector<double>* angles,double rho) : pixel(pixel), angles(angles){

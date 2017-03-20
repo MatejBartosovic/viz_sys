@@ -9,14 +9,12 @@
 int main( int argc, char** argv)
 {
     cv::Mat image;
-    image = cv::imread("vizualne2.jpg", CV_LOAD_IMAGE_GRAYSCALE);   // Read the file
+    image = cv::imread("vizualne3.jpg", CV_LOAD_IMAGE_GRAYSCALE);   // Read the file
 
 
-    HughLineDetection rrr(5,0.1,12);
+    HughLineDetection rrr(25,0.05,300);
 
     rrr.getLines(image);
-    //cv::imshow("rrr",image);
-    //cv::waitKey();
 
     return 0;
 }

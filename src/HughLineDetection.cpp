@@ -30,53 +30,45 @@ void HughLineDetection::getLines(cv::Mat &image) {
 
     std::vector<std::vector<std::vector<Line*>>> lines(angles.size());
     for (int i = 0; i <lines.size() ; i++) {
-        lines[i].resize(1000); //TODO nieco s tymto sprav
+        lines[i].resize(10000); //TODO nieco s tymto sprav
     }
 
     for (int i = 0; i < data.size(); i++)
-        for (int j = 0; j < data[i].lines.size(); j++){
-            lines[data[i].lines[j].angleId][data[i].lines[j].distance].push_back(&data[i].lines[j]);
-            printf("array x =%d y= %d\n",lines[data[i].lines[j].angleId][data[i].lines[j].distance][0]->pixel.x,lines[data[i].lines[j].angleId][data[i].lines[j].distance][0]->pixel.y);
-            printf("array distance =%d\n",lines[data[i].lines[j].angleId][data[i].lines[j].distance][0]->distance);
-            printf("data pointer x = %d y = %d\n",data[i].lines[0].pixel.x,data[i].lines[0].pixel.y);
-            printf("data object x = %d y = %d\n",data[i].pixel.x,data[i].pixel.y);
-            //printf("lines x = %d y = %d\n",lines[data[i].lines[j].angleId][data[i].lines[j].distance][j]->pixel->x,lines[data[i].lines[j].angleId][data[i].lines[j].distance][j]->pixel->y);
-        }
+        for (int j = 0; j < data[i].lines.size(); j++)
+            if(data[i].lines[j].distance<10000) //TODO tiez nieco
+                lines[data[i].lines[j].angleId][data[i].lines[j].distance].push_back(&data[i].lines[j]);
+            else
+                printf("skipping\n");
 
 
-
-    std::vector<Line*> *longest;
-    uint16_t length = 0;
+    std::vector<std::vector<Line*>*> longest;
     for (int i = 0; i < lines.size(); i++) {
-        //printf("aaa %d %d\n",lines.size(),i);
         for (int j = 0; j < lines[i].size(); j++) {
-            if(lines[i][j].size() > length){
-                length = lines[i][j].size();
-                printf("length = %d\n",length);
-                printf("x %d y %d\n",lines[i][j][0]->pixel.x,lines[i][j][0]->pixel.y);
-                longest = &(lines[i][j]);
+            if(lines[i][j].size() > threshold){
+                if(DEBUG)
+                    printf("length = %d\n",(int)lines[i][j].size());
+                longest.push_back(&(lines[i][j]));
             }
         }
     }
     cv::Mat resized;
-    cv::resize(image,resized,cv::Size(image.cols * 3,image.rows * 3),0,0,3);
-    cv::imshow("rrr",resized);
+    //cv::resize(image,resized,cv::Size(image.cols * 3,image.rows * 3),0,0,3);
+    cv::imshow("rrr",image);
     cv::waitKey();
-    cv::Vec3b red;
-    red[0]=255;
-    red[1]=0;
-    red[2]=0;
-    for (int i = 0; i < longest->size(); ++i) {
-        printf("x %d y %d\n",longest->at(i)->pixel.x,longest->at(i)->pixel.y);
-        image.at<uint8_t>(cv::Point(longest->at(i)->pixel.x,longest->at(i)->pixel.y)) = 128;
+
+    for (int i = 0; i < longest.size() ; i++) {
+        for (int j = 0; j < longest[i]->size(); j++) {
+            image.at<uint8_t>(cv::Point(longest[i]->at(j)->pixel.y,longest[i]->at(j)->pixel.x)) = 128;
+            if(DEBUG)
+                printf("x %d y %d\n",longest[i]->at(j)->pixel.x,longest[i]->at(j)->pixel.y);
+        }
+        printf(" alfa %lf distance %d length %d\n",angles[longest[i]->at(0)->angleId], longest[i]->at(0)->distance,(int)longest[i]->size());
     }
 
-    cv::resize(image,resized,cv::Size(image.cols * 3,image.rows * 3),0,0,3);
-    cv::imshow("eee",resized);
-    cv::waitKey();
 
-    printf("najdlhsia ma %d pixelov\n",length);
-    printf("najdlhsia alfa %lf distance %d\n",angles[longest->at(0)->angleId], longest->at(0)->distance);
+    //cv::resize(image,resized,cv::Size(image.cols * 3,image.rows * 3),0,0,3);
+    cv::imshow("eee",image);
+    cv::waitKey();
 
 }
 
