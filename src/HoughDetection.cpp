@@ -12,7 +12,7 @@ int main( int argc, char** argv)
     image = cv::imread("vizualne.jpg", CV_LOAD_IMAGE_GRAYSCALE);   // Read the file
 
 
-    HughLineDetection rrr(10,0.05,500);
+    HughLineDetection rrr(4,0.1,12);
 
     rrr.getLines(image);
     //cv::imshow("rrr",image);
