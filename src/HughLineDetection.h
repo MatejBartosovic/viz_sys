@@ -41,6 +41,9 @@ public:
                 double x = citatel / (2 * angles->at(i));
                 double y = citatel / 2;
                 int distance = sqrt(pow(x, 2) + pow(y, 2)) / rho;
+                #ifdef DEBUG
+                printf("angle = %lf distance = %d\n",angles->at(i),distance);
+                #endif
                 lines.push_back(Line(i, distance, this->pixel));
             }
         }
