@@ -27,6 +27,7 @@ void HughLineDetection::getLines(cv::Mat &image) {
     for(int i= 0; i<image.rows;i++){
         for(int j=0;j<image.cols;j++){
             if(image.at<uint8_t>(i,j) >= 240){
+                //pozri header
                 data.push_back(Data(Pixel(i,j),&angles,rho));
             }
         }
@@ -49,8 +50,8 @@ void HughLineDetection::getLines(cv::Mat &image) {
         for (int j = 0; j < data[i].lines.size(); j++)
             if(data[i].lines[j].distance<10000) //TODO tiez nieco
                 lines[data[i].lines[j].angleId][data[i].lines[j].distance].push_back(&data[i].lines[j]);
-            else
-                printf("skipping\n");
+            else{}
+                //printf("skipping\n");
 
 
     /*
@@ -84,12 +85,13 @@ void HughLineDetection::getLines(cv::Mat &image) {
     cv::cvtColor(image,colorImage,cv::COLOR_GRAY2BGR);
     cv::Mat lineImage = colorImage.clone();
 
+    cv::Point3_<uchar> color(255,0,0);
     for (int i = 0; i < longest.size() ; i++) {
         cv::Mat currentLine = colorImage.clone();
         for (int j = 0; j < longest[i]->size(); j++) {
             //image.at<uint8_t>(cv::Point(longest[i]->at(j)->pixel.y,longest[i]->at(j)->pixel.x)) = 128;
-            currentLine.at<cv::Point3_<uchar> >(longest[i]->at(j)->pixel.x,longest[i]->at(j)->pixel.y) = cv::Point3_<uchar>(0,0,255);
-            lineImage.at<cv::Point3_<uchar> >(longest[i]->at(j)->pixel.x,longest[i]->at(j)->pixel.y) = cv::Point3_<uchar>(0,0,255);
+            currentLine.at<cv::Point3_<uchar> >(longest[i]->at(j)->pixel.x,longest[i]->at(j)->pixel.y) = color;
+            lineImage.at<cv::Point3_<uchar> >(longest[i]->at(j)->pixel.x,longest[i]->at(j)->pixel.y) = color;
             #ifdef DEBUG
             printf("x %d y %d\n",longest[i]->at(j)->pixel.x,longest[i]->at(j)->pixel.y);
             #endif
@@ -101,6 +103,10 @@ void HughLineDetection::getLines(cv::Mat &image) {
         #else
         cv::imshow("Lines",currentLine);
         #endif
+        uchar tmp = color.x;
+        color.x = color.y;
+        color.y = color.z;
+        color.z = tmp;
         cv::waitKey();
     }
     #ifdef RESIZE
