@@ -35,16 +35,20 @@ public:
         std::vector<Line> lines;
 
         inline Data(Pixel pixel, std::vector<double>* angles,double rho) : pixel(pixel), angles(angles){
+            //calculate polar
+            double r = sqrt(pow(pixel.x,2) + pow(pixel.y,2));
+            double fi = atan2(pixel.x,pixel.y);
+            #ifdef DEBUG
+            printf(" r = %lf fi = %lf\n",r,fi);
+            #endif
             //calculate distance for each angle
             for(int i = 0;i<angles->size();i++) {
-                double citatel = pixel.y + pixel.x * angles->at(i);
-                double x = citatel / (2 * angles->at(i));
-                double y = citatel / 2;
-                int distance = sqrt(pow(x, 2) + pow(y, 2)) / rho;
+                double delta = M_PI_2 + fi - angles->at(i);
+                double d = cos(delta) * r;
+                lines.push_back(Line(i,d,this->pixel));
                 #ifdef DEBUG
-                printf("angle = %lf distance = %d\n",angles->at(i),distance);
+                printf(" x = %d y = %d delta %lf angle = %lf distance = %lf\n",pixel.x, pixel.y,delta,angles->at(i),d);
                 #endif
-                lines.push_back(Line(i, distance, this->pixel));
             }
         }
     };

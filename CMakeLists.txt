@@ -40,11 +40,12 @@ target_link_libraries(uloha1
         ${OpenCV_LIBS}
         )
 
-add_executable(uloha2   src/HoughDetection.cpp
+add_executable(uloha2 src/uloha2.cpp
                         src/HughLineDetection.cpp
                         src/HughLineDetection.h
                         )
-target_compile_definitions(uloha2 PRIVATE DEBUG=true)
+#target_compile_definitions(uloha2 PRIVATE DEBUG)
+#target_compile_definitions(uloha2 PRIVATE RESIZE)
 
 target_link_libraries(uloha2
         ${OpenCV_LIBS}

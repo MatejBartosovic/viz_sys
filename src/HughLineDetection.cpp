@@ -9,12 +9,10 @@
 HughLineDetection::HughLineDetection(double rho, double theta, int threshold): rho(rho), threshold(threshold){
     double angle = 0 ;
     while(angle < M_PI){
-        angles.push_back(tan(angle));
-        #ifdef DEBUG
-        printf("angle = %lf tan = %lf\n",angle,tan(angle));
-        #endif
+        angles.push_back(angle);
         angle+=theta;
     }
+    angles.push_back(M_PI);
     printf("\n");
 }
 
@@ -86,14 +84,14 @@ void HughLineDetection::getLines(cv::Mat &image) {
     cv::Mat lineImage = colorImage.clone();
 
     cv::Point3_<uchar> color(255,0,0);
+    printf("velkost x = %d y = %d r =%lf\n",lineImage.rows,lineImage.cols,sqrt(pow(lineImage.rows,2)+ pow(lineImage.cols,2)));
     for (int i = 0; i < longest.size() ; i++) {
         cv::Mat currentLine = colorImage.clone();
         for (int j = 0; j < longest[i]->size(); j++) {
-            //image.at<uint8_t>(cv::Point(longest[i]->at(j)->pixel.y,longest[i]->at(j)->pixel.x)) = 128;
             currentLine.at<cv::Point3_<uchar> >(longest[i]->at(j)->pixel.x,longest[i]->at(j)->pixel.y) = color;
             lineImage.at<cv::Point3_<uchar> >(longest[i]->at(j)->pixel.x,longest[i]->at(j)->pixel.y) = color;
             #ifdef DEBUG
-            printf("x %d y %d\n",longest[i]->at(j)->pixel.x,longest[i]->at(j)->pixel.y);
+            //printf("x %d y %d\n",longest[i]->at(j)->pixel.x,longest[i]->at(j)->pixel.y);
             #endif
         }
         printf(" alfa %lf, alfa id =%d, distance %d, length %d\n",angles[longest[i]->at(0)->angleId], longest[i]->at(0)->angleId,longest[i]->at(0)->distance,(int)longest[i]->size());
