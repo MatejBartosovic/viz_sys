@@ -3,16 +3,18 @@
 //
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
-#include "HughLineDetection.h"
+#include "HoughLineDetection.h"
 #include <unistd.h>
 
-HughLineDetection::HughLineDetection(double rho, double theta, int threshold): rho(rho), threshold(threshold){
+HughLineDetection::HughLineDetection(uint32_t rho, double theta, int threshold): rho(rho), threshold(threshold){
     double angle = 0 ;
-    while(angle < M_PI){
+    int stepNumbers =ceil(M_PI/theta); // zaokruhlenie hore
+    theta = M_PI/stepNumbers;
+
+    for(int i=0; i<stepNumbers;i++){
         angles.push_back(angle);
         angle+=theta;
     }
-    angles.push_back(M_PI);
     printf("\n");
 }
 
@@ -22,6 +24,7 @@ void HughLineDetection::getLines(cv::Mat &image) {
      * get white pixels and create data
      * */
     std::vector<Data> data;
+    printf("rho = %d\n",rho);
     for(int i= 0; i<image.rows;i++){
         for(int j=0;j<image.cols;j++){
             if(image.at<uint8_t>(i,j) >= 240){
@@ -35,9 +38,10 @@ void HughLineDetection::getLines(cv::Mat &image) {
     /*
      * resize output data
      * */
+    int maxDistance = sqrt(pow(image.rows,2)+pow(image.cols,2))/rho;
     std::vector<std::vector<std::vector<Line*>>> lines(angles.size());
     for (int i = 0; i <lines.size() ; i++) {
-        lines[i].resize(10000); //TODO nieco s tymto sprav
+        lines[i].resize(maxDistance); //TODO nieco s tymto sprav
     }
 
 
@@ -46,11 +50,12 @@ void HughLineDetection::getLines(cv::Mat &image) {
      * */
     for (int i = 0; i < data.size(); i++)
         for (int j = 0; j < data[i].lines.size(); j++)
-            if(data[i].lines[j].distance<10000) //TODO tiez nieco
+            if(data[i].lines[j].distance<maxDistance) //TODO tiez nieco
                 lines[data[i].lines[j].angleId][data[i].lines[j].distance].push_back(&data[i].lines[j]);
-            else{}
-                //printf("skipping\n");
+            else {
+                printf("skipping %d\n",data[i].lines[j].distance);
 
+            }
 
     /*
      * Sort lines and chose appropriate lines
@@ -100,6 +105,7 @@ void HughLineDetection::getLines(cv::Mat &image) {
         cv::imshow("Lines",resized);
         #else
         cv::imshow("Lines",currentLine);
+        cv::imwrite("image" + std::to_string(i)+".jpg",currentLine);
         #endif
         uchar tmp = color.x;
         color.x = color.y;
@@ -113,6 +119,7 @@ void HughLineDetection::getLines(cv::Mat &image) {
     #else
     cv::imshow("Lines",lineImage);
     #endif
+    cv::imwrite("outpup.jpg",lineImage);
     cv::waitKey();
 
 }

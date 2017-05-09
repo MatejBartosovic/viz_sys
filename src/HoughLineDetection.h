@@ -44,7 +44,7 @@ public:
             //calculate distance for each angle
             for(int i = 0;i<angles->size();i++) {
                 double delta = M_PI_2 + fi - angles->at(i);
-                double d = cos(delta) * r;
+                double d = fabs(cos(delta)) * r;
                 lines.push_back(Line(i,d,this->pixel));
                 #ifdef DEBUG
                 printf(" x = %d y = %d delta %lf angle = %lf distance = %lf\n",pixel.x, pixel.y,delta,angles->at(i),d);
@@ -54,10 +54,10 @@ public:
     };
     std::vector<double> angles;
 protected:
-    int rho;
+    uint32_t rho;
     int threshold;
 public:
-    HughLineDetection(double rho, double theta, int threshold);
+    HughLineDetection(uint32_t rho, double theta, int threshold);
     void getLines(cv::Mat &image);
 };
 #endif //VIZ_SYS_HUGHLINEDETECTION_H

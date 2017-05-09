@@ -4,7 +4,7 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 
-#include "HughLineDetection.h"
+#include "HoughLineDetection.h"
 
 int main( int argc, char** argv)
 {
@@ -12,7 +12,7 @@ int main( int argc, char** argv)
     image = cv::imread("vizualne3.jpg", CV_LOAD_IMAGE_GRAYSCALE);   // Read the file
 
 
-    HughLineDetection rrr(10,0.01,200);
+    HughLineDetection rrr(1,0.01,170);
 
     rrr.getLines(image);
 

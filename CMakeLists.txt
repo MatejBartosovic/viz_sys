@@ -34,15 +34,9 @@ include_directories(
 message(STATUS "${OpenCV_INCLUDE_DIRS}")
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(uloha1 src/main.cpp)
-
-target_link_libraries(uloha1
-        ${OpenCV_LIBS}
-        )
-
 add_executable(uloha2 src/uloha2.cpp
-                        src/HughLineDetection.cpp
-                        src/HughLineDetection.h
+        src/HoughLineDetection.cpp
+        src/HoughLineDetection.h
                         )
 #target_compile_definitions(uloha2 PRIVATE DEBUG)
 #target_compile_definitions(uloha2 PRIVATE RESIZE)
